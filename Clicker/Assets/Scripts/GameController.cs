@@ -4,60 +4,65 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] private float maxTime = 10f;
     [SerializeField] private TMP_Text startGameInstruction;
     [SerializeField] private TMP_Text timeCounter;
     [SerializeField] private TMP_Text clicksCounter;
     [SerializeField] private TMP_Text highScoreCounter;
     [SerializeField] private GameObject creditsScreen;
-    [SerializeField] private float maxTime = 10f;
+    [SerializeField] private AdsController ads;
 
     private static string _prefKey_highScore = "HighScore";
 
-    private bool _isGameStarted;
+    private bool _isTimerRunning;
     private float _currentTimer;
+    private float _tempMaxTime;
     private int _currentClicks;
     private int _highestScoreSaved;
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
+
         SetupData();
         FetchHighScore();
     }
 
     private void Update()
     {
-        if(_isGameStarted && _currentTimer < maxTime
-            && _currentTimer > 0)
+        if(_isTimerRunning)
         {
             _currentTimer -= Time.deltaTime;
             timeCounter.text = GetFormattedTimeToDisplay();
             highScoreCounter.text = GetHighestScoreToDisplay();
 
             if(_currentTimer <= 0)
-            {
-                UpdateHighScore();
-                StartCoroutine(Cooldown());
-                startGameInstruction.gameObject.SetActive(true);
-            }
+                ExecuteEndgame();
         }
     }
 
     // Start playing or add score
     public void Click() {
-        if (!_isGameStarted)
+        if (!_isTimerRunning)
         {
-            SetupData();
-            _isGameStarted = true;
+            _isTimerRunning = true;
             _currentTimer -= Time.deltaTime;
             startGameInstruction.gameObject.SetActive(false);
         }
 
-        if (_currentTimer < maxTime
+        if (_currentTimer < _tempMaxTime
             && _currentTimer > 0)
         {
             _currentClicks++;
             clicksCounter.text = _currentClicks.ToString();
         }
+    }
+
+    private void ExecuteEndgame()
+    {
+        _currentTimer = 0;
+        UpdateHighScore();
+        StartCoroutine(Cooldown());
     }
 
     public bool IsCreditScreenActive()
@@ -69,12 +74,20 @@ public class GameController : MonoBehaviour
     {
         creditsScreen.SetActive(!creditsScreen.activeSelf);
     }
+    public void AddTime(float timeToAdd)
+    {
+        _currentTimer += timeToAdd;
+        _tempMaxTime += timeToAdd;
+        timeCounter.text = GetFormattedTimeToDisplay();
+    }
 
     private void SetupData()
     {
-        _isGameStarted = false;
-        _currentTimer = maxTime;
+        _isTimerRunning = false;
+        _tempMaxTime = maxTime;
+        _currentTimer = _tempMaxTime;
         _currentClicks = 0;
+        timeCounter.text = GetFormattedTimeToDisplay();
     }
 
     private string GetFormattedTimeToDisplay()
@@ -94,8 +107,10 @@ public class GameController : MonoBehaviour
 
     private IEnumerator Cooldown()
     {
-        yield return new WaitForSeconds(2);
-        _isGameStarted = false;
+        yield return new WaitForSeconds(1);
+        SetupData();
+        startGameInstruction.gameObject.SetActive(true);
+        ads.ShowAdsAfterTurnEnded();
     }
 
     private void FetchHighScore()
