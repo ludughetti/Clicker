@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     [SerializeField] private float maxTime = 10f;
+    [SerializeField] private string privacyPolicyURL = "https://docs.google.com/document/d/13RPq7b0-xkqRXCNxO2VCEc5TfrtB0NsCnjRFFp8yAYI/view";
     [SerializeField] private TMP_Text startGameInstruction;
     [SerializeField] private TMP_Text timeCounter;
     [SerializeField] private TMP_Text clicksCounter;
@@ -61,8 +62,11 @@ public class GameController : MonoBehaviour
     private void ExecuteEndgame()
     {
         _currentTimer = 0;
+        timeCounter.text = GetFormattedTimeToDisplay();
+        ads.ShowAdsAfterTurnEnded();
         UpdateHighScore();
-        StartCoroutine(Cooldown());
+        SetupData();
+        startGameInstruction.gameObject.SetActive(true);
     }
 
     public bool IsCreditScreenActive()
@@ -79,6 +83,11 @@ public class GameController : MonoBehaviour
         _currentTimer += timeToAdd;
         _tempMaxTime += timeToAdd;
         timeCounter.text = GetFormattedTimeToDisplay();
+    }
+
+    public void OpenPrivacyPolicyURL()
+    {
+        Application.OpenURL(privacyPolicyURL);
     }
 
     private void SetupData()
@@ -103,14 +112,6 @@ public class GameController : MonoBehaviour
         return _currentClicks > _highestScoreSaved 
             ? _currentClicks.ToString() 
             : _highestScoreSaved.ToString();
-    }
-
-    private IEnumerator Cooldown()
-    {
-        yield return new WaitForSeconds(1);
-        SetupData();
-        startGameInstruction.gameObject.SetActive(true);
-        ads.ShowAdsAfterTurnEnded();
     }
 
     private void FetchHighScore()

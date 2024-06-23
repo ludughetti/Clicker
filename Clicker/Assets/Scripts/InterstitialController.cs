@@ -58,5 +58,7 @@ public class InterstitialController : MonoBehaviour, IUnityAdsLoadListener, IUni
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
         Debug.Log("Showing interstitial is completed");
+        _isAdLoaded = false;
+        Initialize();
     }
 }

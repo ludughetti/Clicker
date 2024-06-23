@@ -6,6 +6,7 @@ public class RewardedAdController : MonoBehaviour, IUnityAdsLoadListener, IUnity
 {
     [SerializeField] private string androidAdUnityId = "Rewarded_Android";
     [SerializeField] private string iOSAdUnityId = "Rewarded_iOS";
+    [SerializeField] private GameObject rewardsButton;
 
     public Action OnRewardsAdWatched = delegate { };
 
@@ -30,6 +31,7 @@ public class RewardedAdController : MonoBehaviour, IUnityAdsLoadListener, IUnity
     public void OnUnityAdsAdLoaded(string placementId)
     {
         _isAdLoaded = true;
+        ToggleRewardsButton();
     }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
@@ -65,5 +67,14 @@ public class RewardedAdController : MonoBehaviour, IUnityAdsLoadListener, IUnity
         {
             OnRewardsAdWatched.Invoke();
         }
+
+        _isAdLoaded = false;
+        ToggleRewardsButton();
+        Initialize();
+    }
+
+    private void ToggleRewardsButton()
+    {
+        rewardsButton.SetActive(_isAdLoaded);
     }
 }

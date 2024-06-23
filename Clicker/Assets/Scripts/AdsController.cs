@@ -1,9 +1,11 @@
-using System;
 using UnityEngine;
 using UnityEngine.Advertisements;
 
 public class AdsController : MonoBehaviour, IUnityAdsInitializationListener
 {
+    [SerializeField] string androidAdUnityId = "5643199";
+    [SerializeField] string iOSAdUnityId = "5643198";
+
     [SerializeField] private GameController gameController;
     [SerializeField] private BannerController bannerController;
     [SerializeField] private InterstitialController interstitialController;
@@ -38,14 +40,12 @@ public class AdsController : MonoBehaviour, IUnityAdsInitializationListener
     private void Awake()
     {
 #if UNITY_IOS
-        _gameId = "5643198";
+        _gameId = iOSAdUnityId;
 #elif UNITY_ANDROID
-        _gameId = "5643199";
-#elif UNITY_EDITOR
-        _gameId = "5643199";
+        _gameId = androidAdUnityId;
 #endif
 
-        if(!Advertisement.isInitialized && Advertisement.isSupported)
+        if (!Advertisement.isInitialized && Advertisement.isSupported)
         {
             Advertisement.Initialize(_gameId, true, this);
         }
