@@ -54,6 +54,11 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public bool IsCreditScreenActive()
+    {
+        return creditsScreen.activeSelf;
+    }
+
     public void ToggleCreditsScreen()
     {
         creditsScreen.SetActive(!creditsScreen.activeSelf);
