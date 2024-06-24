@@ -26,15 +26,18 @@ public class AdsController : MonoBehaviour, IUnityAdsInitializationListener
 
     public void OnInitializationComplete()
     {
+#if UNITY_ANDROID
         Debug.Log("Unity Ads initialization complete.");
         bannerController.Show();
         interstitialController.Initialize();
         rewardedAdController.Initialize();
+#endif
     }
 
     public void OnInitializationFailed(UnityAdsInitializationError error, string message)
     {
         Debug.Log($"Unity Ads initialization failed: {error.ToString()} - {message}");
+        gameObject.SetActive(false);
     }
 
     private void Awake()
@@ -43,6 +46,9 @@ public class AdsController : MonoBehaviour, IUnityAdsInitializationListener
         _gameId = iOSAdUnityId;
 #elif UNITY_ANDROID
         _gameId = androidAdUnityId;
+#else
+        _gameId = androidAdUnityId;
+        gameObject.SetActive(false);
 #endif
 
         if (!Advertisement.isInitialized && Advertisement.isSupported)

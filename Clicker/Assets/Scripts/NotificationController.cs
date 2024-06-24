@@ -1,5 +1,7 @@
+#if UNITY_ANDROID
 using System.Collections;
 using Unity.Notifications.Android;
+#endif
 using UnityEngine;
 
 public class NotificationController : MonoBehaviour

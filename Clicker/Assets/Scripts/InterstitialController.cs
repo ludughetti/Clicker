@@ -16,6 +16,9 @@ public class InterstitialController : MonoBehaviour, IUnityAdsLoadListener, IUni
     _adUnityId = iOSAdUnityId;
 #elif UNITY_ANDROID
         _adUnityId = androidAdUnityId;
+#else
+        _adUnityId = androidAdUnityId;
+        gameObject.SetActive(false);
 #endif
     }
 

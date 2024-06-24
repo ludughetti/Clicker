@@ -20,6 +20,9 @@ public class RewardedAdController : MonoBehaviour, IUnityAdsLoadListener, IUnity
         _adUnityId = iOSAdUnityId;
 #elif UNITY_ANDROID
         _adUnityId = androidAdUnityId;
+#else
+        _adUnityId = androidAdUnityId;
+        gameObject.SetActive(false);
 #endif
     }
 
